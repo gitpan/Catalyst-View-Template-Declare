@@ -8,7 +8,7 @@ use NEXT;
 use Template::Declare::Tags;
 require Module::Pluggable::Object;
 
-our $VERSION = '0.00_02';
+our $VERSION = '0.00_03';
 
 sub COMPONENT {
     my $self  = shift;
@@ -19,16 +19,28 @@ sub COMPONENT {
     my $mpo = Module::Pluggable::Object->new(require     => 0,
                                              search_path => $class,
                                             );
+    
+    # load sub-templates (and do a bit of magic niceness)
     my @extras = $mpo->plugins;
     foreach my $extra (@extras) {
+        # auto-import TD::Tags into the sub-template
+        eval "package $extra; use Template::Declare::Tags;";
+        
+        # load module (warn on error)
         if (!eval "require $extra"){
             $c->log->warn("Couldn't include $extra: $@");
             next;
         }
-
+        
         $c->log->debug("Loading subtemplate $extra") if $c->debug;
+        
+        # make the templates a subclass of TD (required by TD)
         eval q{push @}. $extra. q{::ISA, 'Template::Declare'};
+
     }
+
+    # auto-import tags into the main module also
+    eval "package $class; use Template::Declare::Tags;";
     
     # init Template::Declare
     Template::Declare->init(roots => [$class, @extras]);
@@ -72,9 +84,34 @@ Catalyst::View::Template::Declare - Use Template::Declare with Catalyst
 
 =head1 VERSION
 
-Version 0.00_01
+Version 0.00_03
 
 =head1 SYNOPSIS
+
+Create the view:
+
+     myapp_create.pl view TD Template::Declare
+
+Add templates in C<< MyApp::View::TD::<name> >>:
+
+     package MyApp::View::TD::Test;
+     template foo => sub { html {} };
+     template bar => sub {   ...   };
+     1;
+
+Then use the templates from your application:
+
+     $c->stash(template => 'foo');
+     $c->detach('View::TD');
+
+You can get at the Catalyst context via the C<<c>> package:
+
+     template foo => sub { "This is the ". c->action. " action." };
+     template bar => sub { "Hello, ". c->stash->{world} };
+
+Have fun.  This is all very experimental.
+
+=head1 DESCRIPTION
 
 Very experimental.
 
@@ -97,7 +134,7 @@ In your app:
     $c->stash(title => 'test');
     $c->detach('View::TD');
 
-Outputs:
+And get the output:
 
     <html><head><title>test</title></head><body>Hello, world</body></html>
 

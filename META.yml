@@ -16,6 +16,7 @@ no_index:
     - t
 requires: 
   Catalyst::View: 0
+  Module::Pluggable::Object: 0
   NEXT: 0
   Template::Declare: 0
-version: 0.00_02
+version: 0.00_03
