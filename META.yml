@@ -1,14 +1,10 @@
---- 
 abstract: Use Template::Declare with Catalyst
 author: Jonathan Rockway, C<< <jrockway at cpan.org> >>
 build_requires: 
   Test::More: 0
 distribution_type: module
-generated_by: Module::Install version 0.65
+generated_by: Module::Install version 0.64
 license: perl
-meta-spec: 
-  url: http://module-build.sourceforge.net/META-spec-v1.3.html
-  version: 1.3
 name: Catalyst-View-Template-Declare
 no_index: 
   directory: 
@@ -18,5 +14,5 @@ requires:
   Catalyst::View: 0
   Module::Pluggable::Object: 0
   NEXT: 0
-  Template::Declare: 0
-version: 0.00_03
+  Template::Declare: 0.21
+version: 0.01
