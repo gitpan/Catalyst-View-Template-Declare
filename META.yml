@@ -19,5 +19,6 @@ requires:
   Catalyst::View::Templated: 0
   Class::C3: 0
   Module::Pluggable::Object: 0
-  Template::Declare: 0.21
-version: 0.02
+  PadWalker: 0
+  Template::Declare: 0.26
+version: 0.03
